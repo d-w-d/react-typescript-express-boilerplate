@@ -64,7 +64,7 @@ function deploy_to_github() {
       console.log('OH NO! STH WENT WRONG :(', err);
       process.exit(1);
     }
-    console.log($(DEPLOYED TO: https://${GITHUB_USER_NAME}.github.io/${GITHUB_REPO_NAME}/));
+    console.log('DEPLOYED TO: https://${GITHUB_USER_NAME}.github.io/${GITHUB_REPO_NAME}/');
   })
 "
 }

@@ -13,7 +13,7 @@ const swaggerOptions: Options = {
     basePath: API_BASE_PATH
   },
   // Path to files containing routes with swagger-jsdoc yml annotations
-  apis: ['./src/server/routes/*.ts']
+  apis: ['./src/server/routes.ts']
 };
 
 export const swaggerDefJson = swaggerJSDoc(swaggerOptions);
