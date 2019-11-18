@@ -7,12 +7,12 @@ redundant
 .solr/**
 coverage
 tempSolr
+compilation-stats.json
 
 # compiled output
-/dist
-/dist-client
-/dist-server
-/node_modules
+**/dist*
+**/dist-client*
+**/dist-server*
 
 # Logs
 logs

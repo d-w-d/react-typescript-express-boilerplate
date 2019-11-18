@@ -1,2 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[0],{"./src/client/Components/LazyDemo/index.tsx":function(e,n,o){"use strict";o.r(n),o.d(n,"LazyDemo",(function(){return s}));var t=o("./node_modules/react/index.js"),a=o.n(t);const s=()=>a.a.createElement("div",null,a.a.createElement("h1",null,"This Component Is Lazily Loaded!"));n.default=s}}]);
-//# sourceMappingURL=lazy.43bd54374e8989830ace.js.map
