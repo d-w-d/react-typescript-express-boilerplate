@@ -1,0 +1,30 @@
+{
+  // These TS options extend/override common options in root config file
+  "extends": "../../tsconfig.json",
+
+  // Need to go back one dir to include src code in `src/common`
+  "include": ["../**/*"],
+
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es6",
+    "lib": ["es2015", "es2017", "dom"],
+    "keyofStringsOnly": true,
+    "allowJs": true,
+    "jsx": "react",
+    "sourceMap": true,
+    "importHelpers": true,
+    "noErrorTruncation": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "@client/*": ["./*"],
+      "@common/*": ["../common/*"],
+      "@components/*": ["./Components/*"],
+      "@server/*": ["../server/*"]
+    },
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true
+  }
+}

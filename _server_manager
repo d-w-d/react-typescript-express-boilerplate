@@ -1,0 +1,73 @@
+#! /bin/bash
+
+clear
+
+### Import env vars from .env
+source _load_env_vars
+
+# If no argument provided to script, then prompt user to select an option
+option=$1
+
+if [[ -z $option ]]; then
+
+  echo """
+    ======================================================================
+
+    CHOOSE ONE OF THESE OPTIONS FOR RUNNING EXPRESS SERVER:
+    (N.b. These options can be passed to script as argument)
+
+    1. Run in development mode (with auto-recompilation)
+    2. Build a production version (output to ./dist-server)
+    3. Run a production version (at ./dist-server)
+    4. Daemonize production server (at ./dist-server)
+
+    ======================================================================
+"""
+  read choice
+  option=$choice
+
+fi
+
+# Test if chosen option is a number between 1 and 5
+if [[ $option =~ ^[0-9]+$ && $option -ge 1 && $option -le 5 ]]; then
+
+  # Execute code based on chosen option
+  if [[ $option -eq 1 ]]; then
+    echo ">>> Starting server in development mode on port "$SERVER_PORT
+    sleep 1
+    rm -rf dist-server
+    ./node_modules/.bin/tsc-watch --skipLibCheck -p src/server/tsconfig.json --onSuccess "node dist-server/server/index.js"
+  fi
+
+  if [[ $option -eq 2 || $option -eq 3 ]]; then
+    echo ">>> Building local production server"
+    rm -rf dist-server
+    ./node_modules/.bin/tsc --skipLibCheck -p src/server/tsconfig.json
+  fi
+
+  if [[ $option -eq 3 ]]; then
+    echo ">>> Running local production server"
+    node ./dist-server/server/index.js
+  fi
+
+  if [[ $option -eq 4 ]]; then
+    if [[ ! $(command -v pm2x) ]]; then
+      echo ">>> NOTE: You don't have pm2 globablly installed."
+      echo ">>> Either install it globally or run from here: ./node_modules/.bin/pm2"
+      pm2=./node_modules/.bin/pm2
+      sleep 2
+    fi
+    echo ">>> Daemonizing local production server with pm2"
+    echo ">>> Run \`pm2 stop SBNPortal\` to stop job"
+    echo ">>> Run \`pm2 delete SBNPortal\` to delete job"
+    echo ">>> Run \`pm2 log SBNPortal\` for logs"
+    echo ">>> Run \`pm2 monit SBNPortal\` for monitoring"
+    echo ""
+    pm2 start dist-server/server/index.js -n SBNPortal
+  fi
+
+else
+
+  echo "Chosen option ("$option") was NOT a number between 1 and 4"
+
+fi

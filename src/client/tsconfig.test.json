@@ -1,0 +1,9 @@
+{
+  // These TS options extend/override common options in root config file
+  "extends": "./tsconfig.json",
+
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5"
+  }
+}

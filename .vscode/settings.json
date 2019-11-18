@@ -1,0 +1,35 @@
+{
+  "typescript.tsdk": "./node_modules/typescript/lib",
+
+  "files.associations": {
+    "*.html": "html"
+  },
+
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 4
+  },
+
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "[jsonc]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "tslint.configFile": "tslint.json",
+
+  "tslint.enable": true,
+
+  "cSpell.ignoreWords": ["ssot"]
+}

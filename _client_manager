@@ -1,0 +1,137 @@
+#! /bin/bash
+
+clear
+
+#####################################################
+### Define some parameters
+#####################################################
+devPort=3000
+option=$1
+githubDistDir=dist-client-github
+
+#####################################################
+### Load env variables
+#####################################################
+
+source _load_env_vars
+
+#####################################################
+### Define functions for running, building, deploying
+#####################################################
+
+# function to run webpack-dev server
+function develop_client() {
+  TS_NODE_PROJECT=src/client/tsconfig.webpack.json \
+    DEV_PORT=$devPort \
+    DEBUG=true \
+    NODE_ENV=development \
+    ./node_modules/.bin/webpack-dev-server \
+    --mode development \
+    --hot \
+    --progress \
+    --watch \
+    --color \
+    --port=$devPort \
+    --config src/client/webpack.config.ts
+}
+
+# function to build client bundle
+function build_client() {
+  TS_NODE_PROJECT=src/client/tsconfig.webpack.json \
+    BASE_HREF=$baseHref \
+    NODE_ENV=production \
+    ./node_modules/.bin/webpack \
+    --mode production \
+    --progress \
+    --color \
+    --config src/client/webpack.config.ts \
+    --json >compilation-stats.json
+}
+
+# function to deploy build to github; easiest way is to wrap around npm package 'gh-pages'
+function deploy_to_github() {
+  # Exit if node not found
+  if [[ -z $(which node) ]]; then
+    echo "node not found -- you need to enable npm!"
+    exit 1
+  fi
+  # Execute some js code
+  node -e "
+  const ghpages = require('gh-pages');
+  console.log('DEPLOYING...');
+  ghpages.publish('$githubDistDir', function (err) {
+    if (!!err) {
+      console.log('OH NO! STH WENT WRONG :(', err);
+      process.exit(1);
+    }
+    console.log($(DEPLOYED TO: https://${GITHUB_USER_NAME}.github.io/${GITHUB_REPO_NAME}/));
+  })
+"
+}
+
+#####################################################
+### If no argument is provided to script,
+### then prompt user to choose an option
+#####################################################
+if [[ -z $option ]]; then
+  clear
+  echo """
+    ======================================================================
+
+    CHOOSE ONE OF THESE OPTIONS FOR RUNNING THE REACT CLIENT:
+    (N.b. These options can be passed directly to script as argument)
+
+    1. Run in development mode (with hot reloading)
+    2. Build a locally runnable production bundle
+    3. Build bundle and analyze it with webpack-bundle-analyzer
+    4. Build and deploy to github
+
+    ======================================================================
+"""
+  read choice
+  option=$choice
+fi
+
+#####################################################
+### Run code sequence based on chosen option
+#####################################################
+
+# Ensure chosen option is a number between 1 and 4
+if [[ $option =~ ^[0-9]+$ && $option -ge 1 && $option -le 4 ]]; then
+
+  if [[ $option -eq 1 ]]; then
+    echo ">>> Starting client in development mode"
+    develop_client
+  fi
+
+  if [[ $option -eq 2 ]]; then
+    echo ">>> Building locally runnable client bundle"
+    rm -rf dist-client
+    baseHref=/
+    build_client
+    rm compilation-stats.json
+  fi
+
+  if [[ $option -eq 3 ]]; then
+    echo ">>> Building and analyzing client bundle"
+    rm -rf dist-client
+    baseHref='/'
+    build_client
+    mv compilation-stats.json ./dist-client/
+    ./node_modules/.bin/webpack-bundle-analyzer ./dist-client/compilation-stats.json
+  fi
+
+  if [[ $option -eq 4 ]]; then
+    echo ">>> Building and deploying to github pages"
+    baseHref=$GITHUB_REPO_NAME
+    rm -rf $githubDistDir
+    build_client
+    mv dist-client $githubDistDir
+    deploy_to_github
+  fi
+
+else
+
+  echo "Chosen option ("$option") was NOT a number between 1 and 5"
+
+fi

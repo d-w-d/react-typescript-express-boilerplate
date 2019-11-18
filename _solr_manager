@@ -1,0 +1,115 @@
+#! /bin/bash
+
+# Script for installing & running solr-lucene
+
+############################
+### SETUP
+############################
+
+# Load vars defined in .env
+source _load_env_vars
+
+d_install() {
+
+  clear
+  echo """
+      ===========================================================================
+      This script is about to install solr and configure it settings given in
+      this tutorial:
+
+      https://lucene.apache.org/solr/guide/8_1/solr-tutorial.html
+
+      NOTE:
+      - Make sure you don't already have solr running; you can check this using:
+        - Debian    : \`netstat -tulpn | grep LIS | grep 8983\`
+        - Mac/Centos: \`lsof -iTCP -sTCP:LISTEN -P | grep 8983\`
+
+      ===========================================================================
+  """
+
+  # If .solr doesn't exist, then create dir, download and install solr
+  if [[ ! -d ./.solr ]]; then
+    if [[ -d tempSolr ]]; then
+      # Cache unpacked .solr dir in tempSolr to avoid repreated downloading in development
+      cp -r tempSolr .solr
+    else
+      echo "Creating .solr dir; this will house all-things solr-lucene"
+      mkdir .solr
+      curl "http://apache-mirror.8birdsvideo.com/lucene/solr/$SOLR_VERSION/solr-$SOLR_VERSION.zip" -o "$PWD/.solr/solr-$SOLR_VERSION.zip"
+      cd .solr
+      unzip -q "solr-$SOLR_VERSION.zip"
+      cd ..
+    fi
+
+    # For demo purposes we'll start solr following the first-tutorial instructions here: https://lucene.apache.org/solr/guide/8_1/solr-tutorial.html
+    printf '2\n8983\n7574\ntechproducts\n2\n2\nsample_techproducts_configs\n' | ./.solr/solr-$SOLR_VERSION/bin/solr start -e cloud
+    sleep 3 # Time to settle
+
+    # Then post the sample data to the endpoint:
+    ./.solr/solr-$SOLR_VERSION/bin/post -c techproducts ./.solr/solr-$SOLR_VERSION/example/exampledocs/*
+
+    echo "
+      OK. Solr is supposed to be running; try: \`curl \"http://localhost:8983/solr/techproducts/select?q=foundation&fl=id\"\`
+    "
+  else
+    echo ".solr dir already exists. If you want to reinstall, then first stop any running solr proceses and remove this dir."
+  fi
+  exit 0
+}
+
+############################
+### MANAGER FUNCTIONS
+############################
+
+d_status() {
+
+  ./.solr/solr-$SOLR_VERSION/bin/solr status
+  return $?
+}
+
+d_start() {
+
+  ./.solr/solr-$SOLR_VERSION/bin/solr start -p 8983 -s .solr/solr-$SOLR_VERSION/example/cloud/node1/solr
+  exit_code=$?
+  echo ">>> View Solr UI at http://localhost:8983"
+  return $exit_code
+
+}
+
+d_stop() {
+
+  echo ">>> Stopping solr"
+  ./.solr/solr-$SOLR_VERSION/bin/solr stop -all
+  return $?
+
+}
+
+d_restart() {
+  d_stop
+  sleep 2
+  d_start
+}
+
+case $1 in
+install)
+  d_install
+  ;;
+status)
+  d_status
+  ;;
+start)
+  d_start
+  ;;
+stop)
+  d_stop
+  ;;
+restart)
+  d_restart
+  ;;
+*)
+  echo "usage: $NAME {install|status|start|stop|restart}"
+  exit 1
+  ;;
+esac
+
+exit 0
