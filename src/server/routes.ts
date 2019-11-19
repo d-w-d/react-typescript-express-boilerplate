@@ -15,7 +15,7 @@ import { signInUser } from './controls/signInUser';
 import { querySolr } from './controls/querySolr';
 
 //
-// Setup swagger routes
+// Setup swagger routes; obviously we don't want to annotate these
 //
 
 // Serve json straight up
@@ -138,14 +138,15 @@ router.post('/signin', (req, res, next) => {
    */
   passport.authenticate('local', function(err, user, info) {
     //
+
     if (!!err) {
       return apiJsonResponse(res, 500, {
-        message: 'Something went wrong authenticating the user. Message: ' + JSON.stringify(info)
+        message: 'Something went wrong authenticating the user. ' + info.message
       });
     }
     if (!user) {
       return apiJsonResponse(res, 401, {
-        message: 'No such user exists'
+        message: info.message.replace(/^username/, 'Username')
       });
     }
 
@@ -176,7 +177,6 @@ router.get('/solr-test', async (req, res) => {
 
 /**
  * @swagger
- *
  *
  * components:
  *   securitySchemes:

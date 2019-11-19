@@ -31,6 +31,7 @@ fi
 # Test if chosen option is a number between 1 and 5
 if [[ ! $option =~ ^[0-9]+$ || ! $option -ge 1 || ! $option -le 5 ]]; then
   echo "Chosen option ("$option") was NOT a number between 1 and 4"
+  exit 1
 fi
 
 # Execute code based on chosen option

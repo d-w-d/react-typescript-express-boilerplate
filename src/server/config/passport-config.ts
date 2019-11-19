@@ -31,6 +31,7 @@ passport.use(
       const users = getUsers();
       // Search for existing user
       const user = users.find(el => el.username === username);
+
       if (!user) return done(undefined, false, { message: `username ${username} not found.` });
       //
       // Test submitted password
