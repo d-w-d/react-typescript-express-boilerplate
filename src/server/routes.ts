@@ -1,8 +1,8 @@
-import passport from 'passport';
-import { swaggerDefJson } from './config/swagger-def';
 import { default as swaggerUi } from 'swagger-ui-express';
+import { swaggerDefJson } from './config/swagger-def';
 import express, { Request, Response } from 'express';
 export const router = express.Router();
+import passport from 'passport';
 
 import { apiJsonResponse } from './utils/apiJsonResponse';
 import { authorizeJWT } from './middleware/authorize-jwt';
@@ -14,11 +14,13 @@ import { signUpUser } from './controls/signUpUser';
 import { signInUser } from './controls/signInUser';
 import { querySolr } from './controls/querySolr';
 
-//
-// Setup swagger routes; obviously we don't want to annotate these
-//
+/**
+ * This file contains the server routes. They are annotated with special comment blocks
+ * that begin with '@swagger'. These blocks are parsed by the swagger-jsdocs library and
+ * converted to a json object that we then serve via the first two routes below.
+ */
 
-// Serve json straight up
+// Serve the swagger json straight up
 router.get('/docs.json', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerDefJson);
@@ -34,6 +36,7 @@ router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDefJson));
  *   securitySchemes:
  *     bearerAuth:            # arbitrary name for the security scheme
  *       type: http
+ *       name: Authorization
  *       scheme: bearer
  *       in: header
  *       bearerFormat: JWT
@@ -163,6 +166,7 @@ router.post('/signin', (req, res, next) => {
  *
  * /solr-test:
  *   get:
+ *     summary: Test pinging a solr endpoint; requires starting solr with _solr_manager
  *     description: Basic unprotected route
  *     produces:
  *       - application/json
@@ -178,31 +182,13 @@ router.get('/solr-test', async (req, res) => {
 /**
  * @swagger
  *
- * components:
- *   securitySchemes:
- *     bearerAuth:            # arbitrary name for the security scheme
- *       type: http
- *       scheme: bearer
- *       in: header
- *       bearerFormat: JWT
- *   responses:
- *     UnauthorizedError:
- *       description: Access token is missing or invalid
- *
  * /locked:
  *   get:
  *     summary: Get a locked resource
  *     produces:
  *       - application/json
- *     parameters:
- *       - name: print-req
- *         in: query
- *         description: flag to print out req
- *         required: false
- *         schema:
- *           type: boolean
  *     security:
- *       - bearerAuth: []
+ *       - bearerAuth: ['Authorization']
  *     responses:
  *       '200':
  *         description: registration response with JWT
