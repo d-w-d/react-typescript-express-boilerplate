@@ -13,7 +13,7 @@ githubDistDir=dist-client-github
 ### Load env variables
 #####################################################
 
-source _load_env_vars
+source .env
 
 #####################################################
 ### Define functions for running, building, deploying

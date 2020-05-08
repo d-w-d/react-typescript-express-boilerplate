@@ -3,7 +3,7 @@
 # Runs jest which scans for `*.spec.ts` files
 # Jest config is in package.json
 
-source _load_env_vars
+source .env
 
 # Run tests on server
 # JEST_TEST_ENV=node ./node_modules/.bin/jest --verbose --detectOpenHandles --config .jest.config.js

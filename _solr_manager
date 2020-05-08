@@ -7,7 +7,7 @@
 ############################
 
 # Load vars defined in .env
-source _load_env_vars
+source .env
 
 d_install() {
 

@@ -3,7 +3,7 @@
 clear
 
 ### Import env vars from .env
-source _load_env_vars
+source .env
 
 # If no argument provided to script, then prompt user to select an option
 option=$1
