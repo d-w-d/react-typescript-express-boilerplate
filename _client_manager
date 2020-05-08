@@ -132,6 +132,6 @@ if [[ $option =~ ^[0-9]+$ && $option -ge 1 && $option -le 4 ]]; then
 
 else
 
-  echo "Chosen option ("$option") was NOT a number between 1 and 5"
+  echo "Chosen option ("$option") was NOT a number between 1 and 4"
 
 fi

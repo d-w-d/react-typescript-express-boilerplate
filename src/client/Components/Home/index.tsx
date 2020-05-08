@@ -6,6 +6,7 @@ import { authContext } from '@client/Contexts/AuthContext';
 import { demoApi } from './demoApi';
 import { useStyles } from './styles';
 import { simpleUuid } from '@client/Utils/simpleUuid';
+import { Link } from 'react-router-dom';
 
 export const pingServerButtonId = 'ping-server-button' + simpleUuid();
 export const snackBarMessageId = 'snackbar-message-id' + simpleUuid();
@@ -16,56 +17,32 @@ export const Home = ({ sth = 'hi' }: { sth?: string }) => {
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const { auth, setAuth, unsetAuth } = useContext(authContext);
 
-  // Event handlers
-  const openSnackbar = async () => {
-    const result = await demoApi();
-    if (!!result.error) {
-      setSnackbarMessage(result.message);
-    } else {
-      setSnackbarMessage(result.data!.test);
-    }
+  const xxx = {
+    urls: [
+      'https://pds-smallbodies.astro.umd.edu/data_sb/missions/ihw/index.shtml',
+      'https://pds-smallbodies.astro.umd.edu/data_sb/missions/ihw/index.shtml',
+      '',
+      '',
+      '',
+      ''
+    ],
+    images: ['', '', '', '', '', '', '']
   };
-  const closeSnackbar = async () => setSnackbarMessage('');
+
+  const yyy = [1, 2, 3];
+  yyy[0];
+
+  const zzz = xxx.urls;
 
   return (
     <div className={classes.homePageContainer}>
-      <h1>Welcome to {`${__SITE_LONG_TITLE__}`} </h1>
+      <h1> Mock Content Page</h1>
 
-      <h2>This is a Subtitle for {`${__SITE_SHORT_TITLE__}`}</h2>
-
-      {!!auth.username ? (
-        <WelcomeName name={auth.username} />
-      ) : (
-        <p>Sign in to access locked resources</p>
-      )}
-
-      <Button id={pingServerButtonId} variant="contained" onClick={openSnackbar}>
-        Click here to ping server!
-      </Button>
-
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left'
-        }}
-        open={!!snackbarMessage}
-        autoHideDuration={6000}
-        ContentProps={{
-          'aria-describedby': snackBarMessageId
-        }}
-        message={<span id={snackBarMessageId}>{snackbarMessage}</span>}
-        action={[
-          <IconButton
-            key="close"
-            aria-label="close"
-            color="inherit"
-            className={classes.close}
-            onClick={closeSnackbar}
-          >
-            <CloseIcon />
-          </IconButton>
-        ]}
-      />
+      {xxx.urls.map((el, ind) => (
+        <div key={ind}>
+          <a href={el}>{'Link ' + ind}</a>
+        </div>
+      ))}
     </div>
   );
 };
